@@ -1,6 +1,6 @@
 const socket = io();
 
-// Quando o servidor envia a lista de palavras
+// Atualiza a lista de palavras
 socket.on('atualizarPalavras', (palavras) => {
     const listaPalavras = document.getElementById('palavras-lista');
     listaPalavras.innerHTML = '';
@@ -11,11 +11,14 @@ socket.on('atualizarPalavras', (palavras) => {
     });
 });
 
-// Adicionar nova palavra
-document.getElementById('adicionar-palavra').addEventListener('click', () => {
-    const novaPalavra = document.getElementById('nova-palavra').value;
-    if (novaPalavra) {
+// Adiciona nova palavra
+const input = document.getElementById('nova-palavra');
+const botao = document.getElementById('adicionar-palavra');
+
+botao.addEventListener('click', () => {
+    const novaPalavra = input.value.trim();
+    if (novaPalavra !== '') {
         socket.emit('adicionarPalavra', novaPalavra);
-        document.getElementById('nova-palavra').value = ''; // Limpar campo
+        input.value = '';
     }
 });
