@@ -5,7 +5,11 @@ const socketIo = require('socket.io');
 // Configuração do servidor
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+    cors: {
+        origin: "*",
+    }
+});
 
 let palavras = []; // Lista que armazenará as palavras
 
@@ -22,17 +26,16 @@ io.on('connection', (socket) => {
     // Quando um jogador envia uma palavra para adicionar
     socket.on('adicionarPalavra', (palavra) => {
         palavras.push(palavra);
-        // Atualizar todos os jogadores com a nova lista de palavras
-        io.emit('atualizarPalavras', palavras);
+        io.emit('atualizarPalavras', palavras); // Envia para todos
     });
 
-    // Quando o jogador se desconectar
     socket.on('disconnect', () => {
         console.log('Um jogador se desconectou');
     });
 });
 
-// Iniciar o servidor na porta 3000
-server.listen(3000, () => {
-    console.log('Servidor rodando em http://localhost:3000');
+// Usar a porta do ambiente (Render) ou 3000 localmente
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
