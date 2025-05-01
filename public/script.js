@@ -1,24 +1,50 @@
 const socket = io();
 
-// Atualiza a lista de palavras
+const telaPreparacao = document.getElementById('tela-preparacao');
+const telaJogo = document.getElementById('tela-jogo');
+
+const listaPalavras = document.getElementById('palavras-lista');
+const input = document.getElementById('nova-palavra');
+const btnAdicionar = document.getElementById('adicionar-palavra');
+const btnEnviar = document.getElementById('enviar-palavras');
+const btnMostrar = document.getElementById('mostrar-palavra');
+
+btnAdicionar.addEventListener('click', () => {
+    const palavra = input.value.trim();
+    if (palavra) {
+        socket.emit('adicionarPalavra', palavra);
+        input.value = '';
+    }
+});
+
+input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        btnAdicionar.click();
+    }
+});
+
+btnEnviar.addEventListener('click', () => {
+    socket.emit('enviarPalavras');
+});
+
+btnMostrar.addEventListener('click', () => {
+    socket.emit('mostrarPalavra');
+});
+
 socket.on('atualizarPalavras', (palavras) => {
-    const listaPalavras = document.getElementById('palavras-lista');
     listaPalavras.innerHTML = '';
-    palavras.forEach((palavra) => {
-        const item = document.createElement('li');
-        item.textContent = palavra;
-        listaPalavras.appendChild(item);
+    palavras.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = p;
+        listaPalavras.appendChild(li);
     });
 });
 
-// Adiciona nova palavra
-const input = document.getElementById('nova-palavra');
-const botao = document.getElementById('adicionar-palavra');
+socket.on('telaJogo', () => {
+    telaPreparacao.style.display = 'none';
+    telaJogo.style.display = 'block';
+});
 
-botao.addEventListener('click', () => {
-    const novaPalavra = input.value.trim();
-    if (novaPalavra !== '') {
-        socket.emit('adicionarPalavra', novaPalavra);
-        input.value = '';
-    }
+socket.on('mostrarPalavra', (palavra) => {
+    alert(`A palavra é: ${palavra}`);
 });

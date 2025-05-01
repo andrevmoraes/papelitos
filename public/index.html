@@ -9,15 +9,22 @@
 <body>
     <h1>Jogo Papelitos Digital</h1>
     
-    <div id="palavras-container">
-        <ul id="palavras-lista"></ul>
+    <div id="tela-preparacao">
+        <div id="palavras-container">
+            <ul id="palavras-lista"></ul>
+        </div>
+        <input type="text" id="nova-palavra" placeholder="Adicionar nova palavra">
+        <button id="adicionar-palavra">Adicionar Palavra</button>
+        <button id="enviar-palavras">Enviar Palavras</button>
     </div>
 
-    <input type="text" id="nova-palavra" placeholder="Adicionar nova palavra">
-    <button id="adicionar-palavra">Adicionar Palavra</button>
+    <div id="tela-jogo" style="display: none;">
+        <button id="mostrar-palavra">Mostrar Palavra</button>
+    </div>
 
     <!-- Carrega o Socket.IO do próprio servidor -->
     <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
 
     <!-- Aguarda o carregamento completo da página antes de rodar o JS -->
     <script>
@@ -33,6 +40,17 @@
                 if (palavra !== '') {
                     socket.emit('adicionarPalavra', palavra);
                     input.value = '';
+                }
+            });
+
+            // Adicionando evento para pressionar Enter
+            input.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    const palavra = input.value.trim();
+                    if (palavra !== '') {
+                        socket.emit('adicionarPalavra', palavra);
+                        input.value = '';
+                    }
                 }
             });
 

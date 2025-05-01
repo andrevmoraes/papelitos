@@ -11,26 +11,57 @@ const io = socketIo(server, {
     }
 });
 
-let palavras = []; // Lista que armazenará as palavras
+let palavrasPorJogador = {}; // Armazena listas de palavras por jogador
+let todasPalavras = [];
 
 // Servindo arquivos estáticos (como o HTML, CSS e JS)
 app.use(express.static('public'));
 
 // Quando um cliente se conecta
 io.on('connection', (socket) => {
-    console.log('Um jogador se conectou');
+    console.log(`Jogador ${socket.id} se conectou`);
 
-    // Enviar a lista de palavras quando o jogador se conectar
-    socket.emit('atualizarPalavras', palavras);
+    // Inicializar lista de palavras para o jogador
+    palavrasPorJogador[socket.id] = [];
+
+    // Enviar a lista de palavras do jogador ao conectar
+    socket.emit('atualizarPalavras', palavrasPorJogador[socket.id]);
 
     // Quando um jogador envia uma palavra para adicionar
     socket.on('adicionarPalavra', (palavra) => {
-        palavras.push(palavra);
-        io.emit('atualizarPalavras', palavras); // Envia para todos
+        if (palavrasPorJogador[socket.id]) {
+            palavrasPorJogador[socket.id].push(palavra);
+            socket.emit('atualizarPalavras', palavrasPorJogador[socket.id]);
+        }
     });
 
+    socket.on('enviarPalavras', () => {
+        todasPalavras.push(...palavrasPorJogador[socket.id]);
+        palavrasPorJogador[socket.id] = [];
+        socket.emit('telaJogo'); // Trocar para tela do botão "Mostrar Palavra"
+    });
+
+    // Quando o jogador solicitar uma palavra para mostrar
+    socket.on('mostrarPalavra', () => {
+        if (todasPalavras.length > 0) {
+            const indice = Math.floor(Math.random() * todasPalavras.length);
+            const palavra = todasPalavras.splice(indice, 1)[0]; // Remove e retorna a palavra
+            socket.emit('mostrarPalavra', palavra);
+        } else {
+            socket.emit('mostrarPalavra', 'Todas as palavras já foram usadas.');
+        }
+    });
+
+    // Quando um jogador solicita limpar as palavras
+    socket.on('limparPalavras', () => {
+        palavrasPorJogador[socket.id] = [];
+        socket.emit('atualizarPalavras', palavrasPorJogador[socket.id]); // Atualizar o cliente
+    });
+
+    // Quando o jogador se desconecta
     socket.on('disconnect', () => {
-        console.log('Um jogador se desconectou');
+        console.log(`Jogador ${socket.id} se desconectou`);
+        //delete palavrasPorJogador[socket.id]; // Remover lista de palavras do jogador
     });
 });
 

@@ -1,12 +1,18 @@
+/* Estilo inspirado no Windows Metro */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-align: center;
-    margin: 20px;
-    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    background-color: #f3f3f3;
+    color: #333;
 }
 
 h1 {
-    color: #333;
+    color: #0078d7;
+    font-size: 2.5em;
+    margin: 20px 0;
+    font-weight: 600;
 }
 
 #palavras-container {
@@ -14,10 +20,11 @@ h1 {
     max-width: 400px;
     margin-left: auto;
     margin-right: auto;
-    background: white;
+    background: #ffffff;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e1e1;
 }
 
 ul {
@@ -26,27 +33,101 @@ ul {
 }
 
 li {
-    background-color: #e0e0e0;
+    background-color: #0078d7;
+    color: white;
     margin: 5px 0;
-    padding: 8px;
-    border-radius: 4px;
+    padding: 10px;
+    border-radius: 0;
+    font-size: 1.1em;
+    text-align: left;
 }
 
 input {
-    margin: 10px;
-    padding: 8px;
-    width: 200px;
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #0078d7;
+    border-radius: 0;
+    font-size: 1em;
+    box-sizing: border-box;
 }
 
 button {
-    padding: 8px 16px;
+    padding: 10px 20px;
     cursor: pointer;
-    background-color: #4CAF50;
+    background-color: #0078d7;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 0;
+    font-size: 1em;
+    transition: background 0.3s ease;
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #005a9e;
+}
+
+button:active {
+    background-color: #004578;
+}
+
+/* Tornando o site responsivo */
+@media (max-width: 600px) {
+    body {
+        margin: 10px;
+    }
+
+    #palavras-container {
+        padding: 15px;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    button {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+/* Melhorias para responsividade */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    #palavras-container {
+        width: 90%;
+        margin: 0 auto;
+        padding: 15px;
+    }
+
+    input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8em;
+    }
+
+    #palavras-container {
+        padding: 10px;
+    }
+
+    input {
+        font-size: 0.9em;
+    }
+
+    button {
+        font-size: 0.9em;
+    }
 }
