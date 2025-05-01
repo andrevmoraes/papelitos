@@ -1,110 +1,111 @@
-/* Novo estilo inspirado no design Apple */
+/* Estilo otimizado para dispositivos móveis */
 body {
     font-family: 'Arial', sans-serif;
     text-align: center;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #3a3a3a, #7a7a7a);
-    color: #ffffff;
-    height: 100vh;
+    background: #f5f5f5;
+    color: #333;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    box-sizing: border-box;
 }
 
 h1 {
     font-size: 2em;
     margin-bottom: 20px;
-    color: #ffffff;
+    color: #444;
 }
 
+/* Ajuste para esconder o container branco ao redor das palavras adicionadas */
 #palavras-container {
-    margin-top: 20px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    background: #ffffff;
+    background: none; /* Remove o fundo branco */
+    border: none; /* Remove a borda */
+    box-shadow: none; /* Remove a sombra */
+    margin: 20px auto; /* Espaçamento adicional para evitar encostar nas bordas */
+    width: 90%;
+    max-width: 500px;
     padding: 20px;
-    border-radius: 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ffffff;
+    border-radius: 8px;
+}
+
+#nova-palavra {
+    margin: 10px auto; /* Espaçamento adicional para centralizar e evitar encostar nas bordas */
+    width: calc(100% - 40px); /* Reduz a largura para incluir o espaçamento */
+    max-width: 500px;
 }
 
 ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
 li {
-    background-color: #0078d7;
-    color: #ffffff;
-    margin: 5px 0;
+    background-color: #e0e0e0;
+    color: #333;
+    margin: 10px 0;
     padding: 10px;
-    border-radius: 0;
-    font-size: 1.1em;
+    border-radius: 5px;
+    font-size: 1em;
     text-align: left;
-    position: relative; /* Permite posicionar o botão de forma absoluta */
+    position: relative;
 }
 
+/* Ajuste para centralizar verticalmente o botão de excluir e encostá-lo na borda direita */
 li button {
-    background-color: transparent; /* Fundo transparente */
+    background-color: transparent;
     border: none;
     position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+    right: 0; /* Encosta na borda direita */
+    top: 50%; /* Centraliza verticalmente */
+    transform: translateY(-50%); /* Ajusta para o centro */
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-}
-
-li button img {
-    width: 20px;
-    height: 20px;
+    color: #888;
+    font-size: 1em;
+    padding: 0 10px; /* Adiciona espaçamento horizontal */
 }
 
 li button:hover {
-    background-color: #ff1a1a;
+    color: #d32f2f;
 }
 
 input {
     margin: 10px 0;
     padding: 10px;
     width: 100%;
-    border: 1px solid #0078d7;
-    border-radius: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     font-size: 1em;
     box-sizing: border-box;
-}
-
-#nova-palavra {
-    width: 100%; /* Ajusta o campo para ocupar o mesmo tamanho do quadro */
-    box-sizing: border-box; /* Inclui padding e borda no cálculo do tamanho */
 }
 
 button {
     padding: 10px 20px;
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    background-color: #0078d7;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
     font-size: 1em;
     transition: background 0.3s ease;
+    width: 100%;
+    max-width: 300px;
+    margin: 10px auto;
 }
 
 button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #005bb5;
 }
 
 button:active {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: #003f8a;
 }
 
-/* Estilo para o modal com efeito de vidro fosco */
+/* Estilo para o modal */
 .modal {
     position: fixed;
     z-index: 1;
@@ -115,23 +116,26 @@ button:active {
     display: flex;
     justify-content: center;
     align-items: center;
-    backdrop-filter: blur(10px);
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
+/* Ajuste para adicionar efeito fosco ao modal */
 .modal-content {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.8); /* Transparência mantida */
+    backdrop-filter: blur(10px); /* Efeito fosco */
+    border-radius: 10px;
     padding: 20px;
     text-align: center;
-    color: #bebebe;
+    color: #333;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    margin: 20px; /* Adicionado espaçamento para evitar encostar nas bordas */
 }
 
 .close {
-    color: #bebebe;
-    font-size: 24px;
+    color: #000000;
+    font-size: 30px; /* Aumentado levemente */
     font-weight: bold;
     position: absolute;
     top: 10px;
@@ -139,8 +143,8 @@ button:active {
     cursor: pointer;
 }
 
-close:hover {
-    color: #ff4d4d;
+.close:hover {
+    color: #d32f2f;
 }
 
 #palavra-exibida {
@@ -151,11 +155,22 @@ close:hover {
 
 /* Responsividade */
 @media (max-width: 600px) {
-    .modal-content {
-        width: 90%;
+    h1 {
+        font-size: 1.8em;
+    }
+
+    li {
+        font-size: 0.9em;
+        padding: 8px;
     }
 
     button {
-        width: 80%;
+        font-size: 0.9em;
+        padding: 8px 15px;
+    }
+
+    input {
+        font-size: 0.9em;
+        padding: 8px;
     }
 }
