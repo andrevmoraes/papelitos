@@ -1,18 +1,22 @@
-/* Estilo inspirado no Windows Metro */
+/* Novo estilo inspirado no design Apple */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Arial', sans-serif;
     text-align: center;
     margin: 0;
     padding: 0;
-    background-color: #f3f3f3;
-    color: #333;
+    background: linear-gradient(135deg, #3a3a3a, #7a7a7a);
+    color: #ffffff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 h1 {
-    color: #0078d7;
-    font-size: 2.5em;
-    margin: 20px 0;
-    font-weight: 600;
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #ffffff;
 }
 
 #palavras-container {
@@ -24,7 +28,7 @@ h1 {
     padding: 20px;
     border-radius: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e1e1e1;
+    border: 1px solid #ffffff;
 }
 
 ul {
@@ -34,12 +38,36 @@ ul {
 
 li {
     background-color: #0078d7;
-    color: white;
+    color: #ffffff;
     margin: 5px 0;
     padding: 10px;
     border-radius: 0;
     font-size: 1.1em;
     text-align: left;
+    position: relative; /* Permite posicionar o botão de forma absoluta */
+}
+
+li button {
+    background-color: transparent; /* Fundo transparente */
+    border: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+li button img {
+    width: 20px;
+    height: 20px;
+}
+
+li button:hover {
+    background-color: #ff1a1a;
 }
 
 input {
@@ -52,82 +80,82 @@ input {
     box-sizing: border-box;
 }
 
+#nova-palavra {
+    width: 100%; /* Ajusta o campo para ocupar o mesmo tamanho do quadro */
+    box-sizing: border-box; /* Inclui padding e borda no cálculo do tamanho */
+}
+
 button {
     padding: 10px 20px;
     cursor: pointer;
-    background-color: #0078d7;
-    color: white;
-    border: none;
-    border-radius: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
     font-size: 1em;
     transition: background 0.3s ease;
 }
 
 button:hover {
-    background-color: #005a9e;
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 button:active {
-    background-color: #004578;
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Tornando o site responsivo */
+/* Estilo para o modal com efeito de vidro fosco */
+.modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    color: #bebebe;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    color: #bebebe;
+    font-size: 24px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+close:hover {
+    color: #ff4d4d;
+}
+
+#palavra-exibida {
+    font-size: 1.5em;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+/* Responsividade */
 @media (max-width: 600px) {
-    body {
-        margin: 10px;
-    }
-
-    #palavras-container {
-        padding: 15px;
-    }
-
-    input {
-        width: 100%;
-    }
-
-    button {
-        width: 100%;
-        margin-top: 10px;
-    }
-}
-
-/* Melhorias para responsividade */
-@media (max-width: 768px) {
-    h1 {
-        font-size: 2em;
-    }
-
-    #palavras-container {
+    .modal-content {
         width: 90%;
-        margin: 0 auto;
-        padding: 15px;
-    }
-
-    input {
-        width: 100%;
-        margin-bottom: 10px;
     }
 
     button {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.8em;
-    }
-
-    #palavras-container {
-        padding: 10px;
-    }
-
-    input {
-        font-size: 0.9em;
-    }
-
-    button {
-        font-size: 0.9em;
+        width: 80%;
     }
 }

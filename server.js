@@ -13,6 +13,8 @@ const io = socketIo(server, {
 
 let palavrasPorJogador = {}; // Armazena listas de palavras por jogador
 let todasPalavras = [];
+// Comentando funcionalidades relacionadas aos jogadores conectados
+// let jogadores = {}; // Armazena os nomes dos jogadores
 
 // Servindo arquivos estáticos (como o HTML, CSS e JS)
 app.use(express.static('public'));
@@ -24,8 +26,20 @@ io.on('connection', (socket) => {
     // Inicializar lista de palavras para o jogador
     palavrasPorJogador[socket.id] = [];
 
+    // socket.on('registrarJogador', (dados) => {
+    //     jogadores[socket.id] = { ...jogadores[socket.id], ...dados };
+    //     io.emit('atualizarJogadores', Object.values(jogadores));
+    //     console.log(`Jogador ${socket.id} registrou informações:`, dados);
+    // });
+
     // Enviar a lista de palavras do jogador ao conectar
     socket.emit('atualizarPalavras', palavrasPorJogador[socket.id]);
+
+    // socket.on('definirNome', (nome) => {
+    //     console.log(`Jogador ${socket.id} definiu o nome para: ${nome}`);
+    //     jogadores[socket.id].nome = nome || `Jogador ${socket.id}`;
+    //     io.emit('atualizarJogadores', Object.values(jogadores));
+    // });
 
     // Quando um jogador envia uma palavra para adicionar
     socket.on('adicionarPalavra', (palavra) => {
@@ -52,17 +66,29 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Quando um jogador solicita todas as palavras adicionadas
+    socket.on('obterTodasPalavras', () => {
+        socket.emit('todasPalavras', todasPalavras);
+    });
+
     // Quando um jogador solicita limpar as palavras
     socket.on('limparPalavras', () => {
         palavrasPorJogador[socket.id] = [];
         socket.emit('atualizarPalavras', palavrasPorJogador[socket.id]); // Atualizar o cliente
     });
 
-    // Quando o jogador se desconecta
-    socket.on('disconnect', () => {
-        console.log(`Jogador ${socket.id} se desconectou`);
-        //delete palavrasPorJogador[socket.id]; // Remover lista de palavras do jogador
+    socket.on('removerPalavra', (index) => {
+        if (palavrasPorJogador[socket.id] && index >= 0 && index < palavrasPorJogador[socket.id].length) {
+            palavrasPorJogador[socket.id].splice(index, 1);
+            socket.emit('atualizarPalavras', palavrasPorJogador[socket.id]);
+        }
     });
+
+    // socket.on('disconnect', () => {
+    //     console.log(`Jogador ${socket.id} se desconectou`);
+    //     delete jogadores[socket.id];
+    //     io.emit('atualizarJogadores', Object.values(jogadores));
+    // });
 });
 
 // Usar a porta do ambiente (Render) ou 3000 localmente

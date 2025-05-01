@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo Papelitos</title>
+    <title>Papelitos</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Jogo Papelitos Digital</h1>
+    <h1>Papelitos</h1>
     
     <div id="tela-preparacao">
         <div id="palavras-container">
@@ -18,8 +18,25 @@
         <button id="enviar-palavras">Enviar Palavras</button>
     </div>
 
+    <!-- Comentando funcionalidades relacionadas aos jogadores conectados -->
+    <!-- <div id="jogadores-container">
+        <h2>Jogadores Conectados</h2>
+        <ul id="jogadores-lista"></ul>
+        <input type="text" id="nome-jogador" placeholder="Digite seu nome">
+        <button id="definir-nome">Definir Nome</button>
+    </div> -->
+
     <div id="tela-jogo" style="display: none;">
         <button id="mostrar-palavra">Mostrar Palavra</button>
+        <button id="voltar-adicionar-palavras">Voltar para Adicionar Palavras</button>
+    </div>
+
+    <!-- Modal para exibir a palavra -->
+    <div id="modal-palavra" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span id="fechar-modal" class="close">&times;</span>
+            <p id="palavra-exibida"></p>
+        </div>
     </div>
 
     <!-- Carrega o Socket.IO do próprio servidor -->
