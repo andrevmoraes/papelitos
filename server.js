@@ -2,6 +2,67 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 
+// Classe para gerenciar o estado do jogo
+class GameState {
+    constructor() {
+        this.palavrasPorJogador = new Map();
+        this.todasPalavras = [];
+    }
+
+    inicializarJogador(socketId) {
+        this.palavrasPorJogador.set(socketId, []);
+        return this.getPalavrasJogador(socketId);
+    }
+
+    adicionarPalavra(socketId, palavra) {
+        if (!palavra || typeof palavra !== 'string') return false;
+        
+        const palavras = this.palavrasPorJogador.get(socketId);
+        if (!palavras) return false;
+
+        palavras.push(palavra.trim());
+        return palavras;
+    }
+
+    enviarPalavrasParaJogo(socketId) {
+        const palavras = this.palavrasPorJogador.get(socketId);
+        if (!palavras) return false;
+
+        this.todasPalavras.push(...palavras);
+        this.palavrasPorJogador.set(socketId, []);
+        return true;
+    }
+
+    obterPalavraAleatoria() {
+        if (this.todasPalavras.length === 0) {
+            return null;
+        }
+        const indice = Math.floor(Math.random() * this.todasPalavras.length);
+        return this.todasPalavras.splice(indice, 1)[0];
+    }
+
+    removerPalavra(socketId, index) {
+        const palavras = this.palavrasPorJogador.get(socketId);
+        if (!palavras || index < 0 || index >= palavras.length) return false;
+
+        palavras.splice(index, 1);
+        return palavras;
+    }
+
+    limparPalavrasJogador(socketId) {
+        this.palavrasPorJogador.set(socketId, []);
+        return [];
+    }
+
+    getPalavrasJogador(socketId) {
+        return this.palavrasPorJogador.get(socketId) || [];
+    }
+
+    removerJogador(socketId) {
+        this.palavrasPorJogador.delete(socketId);
+    }
+}
+
 // Configuração do servidor
 const app = express();
 const server = http.createServer(app);
@@ -11,73 +72,64 @@ const io = socketIo(server, {
     }
 });
 
-let palavrasPorJogador = {}; // Armazena listas de palavras por jogador
-let todasPalavras = [];
-
-// Servindo arquivos estáticos (como o HTML, CSS e JS)
+// Servindo arquivos estáticos
 app.use(express.static('public'));
 
-// Quando um cliente se conecta
+// Instância do estado do jogo
+const gameState = new GameState();
+
+// Gerenciamento de eventos do Socket.IO
 io.on('connection', (socket) => {
-    console.log(`Jogador ${socket.id} se conectou`);
+    console.log(`Jogador ${socket.id} conectado`);
 
-    // Inicializar lista de palavras para o jogador
-    palavrasPorJogador[socket.id] = [];
+    // Inicialização do jogador
+    const palavrasIniciais = gameState.inicializarJogador(socket.id);
+    socket.emit('atualizarPalavras', palavrasIniciais);
 
-    // Enviar a lista de palavras do jogador ao conectar
-    socket.emit('atualizarPalavras', palavrasPorJogador[socket.id]);
-
-    // Quando um jogador envia uma palavra para adicionar
+    // Eventos do jogo
     socket.on('adicionarPalavra', (palavra) => {
-        if (palavrasPorJogador[socket.id]) {
-            palavrasPorJogador[socket.id].push(palavra);
-            socket.emit('atualizarPalavras', palavrasPorJogador[socket.id]);
+        const palavras = gameState.adicionarPalavra(socket.id, palavra);
+        if (palavras) {
+            socket.emit('atualizarPalavras', palavras);
         }
     });
 
     socket.on('enviarPalavras', () => {
-        todasPalavras.push(...palavrasPorJogador[socket.id]);
-        palavrasPorJogador[socket.id] = [];
-        socket.emit('telaJogo'); // Trocar para tela do botão "Mostrar Palavra"
-    });
-
-    // Quando o jogador solicitar uma palavra para mostrar
-    socket.on('mostrarPalavra', () => {
-        if (todasPalavras.length > 0) {
-            const indice = Math.floor(Math.random() * todasPalavras.length);
-            const palavra = todasPalavras.splice(indice, 1)[0]; // Remove e retorna a palavra
-            socket.emit('mostrarPalavra', palavra);
-        } else {
-            socket.emit('mostrarPalavra', 'Todas as palavras já foram usadas.');
+        console.log('Recebido evento enviarPalavras do cliente', socket.id);
+        if (gameState.enviarPalavrasParaJogo(socket.id)) {
+            console.log('Emitindo evento telaJogo para o cliente', socket.id);
+            socket.emit('telaJogo');
         }
     });
 
-    // Quando um jogador solicita todas as palavras adicionadas
-    socket.on('obterTodasPalavras', () => {
-        socket.emit('todasPalavras', todasPalavras);
+    socket.on('mostrarPalavra', () => {
+        const palavra = gameState.obterPalavraAleatoria();
+        socket.emit('mostrarPalavra', palavra || 'Todas as palavras já foram usadas');
     });
 
-    // Quando um jogador solicita limpar as palavras
+    socket.on('obterTodasPalavras', () => {
+        socket.emit('todasPalavras', gameState.todasPalavras);
+    });
+
     socket.on('limparPalavras', () => {
-        palavrasPorJogador[socket.id] = [];
-        socket.emit('atualizarPalavras', palavrasPorJogador[socket.id]); // Atualizar o cliente
+        const palavras = gameState.limparPalavrasJogador(socket.id);
+        socket.emit('atualizarPalavras', palavras);
     });
 
     socket.on('removerPalavra', (index) => {
-        if (palavrasPorJogador[socket.id] && index >= 0 && index < palavrasPorJogador[socket.id].length) {
-            palavrasPorJogador[socket.id].splice(index, 1);
-            socket.emit('atualizarPalavras', palavrasPorJogador[socket.id]);
+        const palavras = gameState.removerPalavra(socket.id, index);
+        if (palavras) {
+            socket.emit('atualizarPalavras', palavras);
         }
     });
 
-    // Quando o jogador desconecta
     socket.on('disconnect', () => {
-        console.log(`Jogador ${socket.id} se desconectou`);
-        //delete palavrasPorJogador[socket.id];
+        console.log(`Jogador ${socket.id} desconectado`);
+        gameState.removerJogador(socket.id);
     });
 });
 
-// Usar a porta do ambiente (Render) ou 3000 localmente
+// Inicialização do servidor
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);

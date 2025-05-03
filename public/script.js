@@ -1,121 +1,139 @@
-const socket = io();
-
-socket.emit('registrarJogador', { nome: 'Jogador Anônimo', avatar: 'default.png' });
-
-const telaPreparacao = document.getElementById('tela-preparacao');
-const telaJogo = document.getElementById('tela-jogo');
-
-const listaPalavras = document.getElementById('palavras-lista');
-const input = document.getElementById('nova-palavra');
-const btnAdicionar = document.getElementById('adicionar-palavra');
-const btnEnviar = document.getElementById('enviar-palavras');
-const btnMostrar = document.getElementById('mostrar-palavra');
-const botaoVoltar = document.getElementById('voltar-adicionar-palavras');
-
-// Comentando funcionalidades relacionadas aos jogadores conectados
-// const listaJogadores = document.getElementById('jogadores-lista');
-// const inputNome = document.getElementById('nome-jogador');
-// const btnDefinirNome = document.getElementById('definir-nome');
-
-const modal = document.getElementById('modal-palavra');
-const palavraExibida = document.getElementById('palavra-exibida');
-const fecharModal = document.getElementById('fechar-modal');
-
-fecharModal.addEventListener('click', () => {
-    modal.style.display = 'none';
-});
-
-window.addEventListener('click', (event) => {
-    if (event.target === modal) {
-        modal.style.display = 'none';
+class GameUI {
+    constructor() {
+        this.socket = io();
+        this.initializeElements();
+        this.setupEventListeners();
+        this.setupSocketListeners();
     }
-});
 
-btnAdicionar.addEventListener('click', () => {
-    const palavra = input.value.trim();
-    if (palavra) {
-        socket.emit('adicionarPalavra', palavra);
-        input.value = '';
+    initializeElements() {
+        // Elementos das telas
+        this.telaPreparacao = document.getElementById('tela-preparacao');
+        this.telaJogo = document.getElementById('tela-jogo');
+        this.listaPalavras = document.getElementById('palavras-lista');
+
+        // Elementos de entrada
+        this.input = document.getElementById('nova-palavra');
+        this.btnAdicionar = document.getElementById('adicionar-palavra');
+        this.btnEnviar = document.getElementById('enviar-palavras');
+        this.btnMostrar = document.getElementById('mostrar-palavra');
+        this.botaoVoltar = document.getElementById('voltar-adicionar-palavras');
+
+        // Elementos do modal
+        this.modal = document.getElementById('modal-palavra');
+        this.palavraExibida = document.getElementById('palavra-exibida');
+        this.fecharModal = document.getElementById('fechar-modal');
+        this.tituloModal = document.getElementById('titulo-modal');
     }
-});
 
-input.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        btnAdicionar.click();
+    setupEventListeners() {
+        // Modal
+        this.fecharModal.addEventListener('click', () => this.fecharModalHandler());
+        window.addEventListener('click', (event) => this.clickForaModalHandler(event));
+
+        // Botões
+        this.btnAdicionar.addEventListener('click', () => this.adicionarPalavraHandler());
+        this.input.addEventListener('keypress', (e) => this.inputKeypressHandler(e));
+        this.btnEnviar.addEventListener('click', () => this.enviarPalavrasHandler());
+        this.btnMostrar.addEventListener('click', () => this.mostrarPalavraHandler());
+        this.botaoVoltar.addEventListener('click', () => this.voltarHandler());
     }
-});
 
-btnEnviar.addEventListener('click', () => {
-    socket.emit('enviarPalavras');
-});
+    setupSocketListeners() {
+        this.socket.on('atualizarPalavras', (palavras) => this.atualizarPalavrasHandler(palavras));
+        this.socket.on('telaJogo', () => this.mudarParaTelaJogo());
+        this.socket.on('mostrarPalavra', (palavra) => this.exibirPalavraModal(palavra));
+    }
 
-btnMostrar.addEventListener('click', () => {
-    socket.emit('mostrarPalavra');
-});
+    // Event Handlers
+    fecharModalHandler() {
+        this.modal.classList.remove('visible');
+        this.modal.setAttribute('aria-hidden', 'true');
+    }
 
-botaoVoltar.addEventListener('click', () => {
-    telaJogo.style.display = 'none';
-    telaPreparacao.style.display = 'block';
-    listaPalavras.innerHTML = '';
-});
+    clickForaModalHandler(event) {
+        if (event.target === this.modal) {
+            this.fecharModalHandler();
+        }
+    }
 
-// Comentando funcionalidades relacionadas aos jogadores conectados
-// btnDefinirNome.addEventListener('click', () => {
-//     const nome = inputNome.value.trim();
-//     if (nome) {
-//         socket.emit('definirNome', nome);
-//     }
-// });
+    adicionarPalavraHandler() {
+        const palavra = this.input.value.trim();
+        if (palavra) {
+            this.socket.emit('adicionarPalavra', palavra);
+            this.input.value = '';
+        }
+    }
 
-const btnVerTodasPalavras = document.createElement('button');
-btnVerTodasPalavras.textContent = 'Ver Todas as Palavras';
-telaPreparacao.appendChild(btnVerTodasPalavras);
+    inputKeypressHandler(e) {
+        if (e.key === 'Enter') {
+            this.adicionarPalavraHandler();
+        }
+    }
 
-btnVerTodasPalavras.style.display = 'none';
-botaoVoltar.style.display = 'none';
+    enviarPalavrasHandler() {
+        console.log('Enviando palavras e iniciando jogo...');
+        this.socket.emit('enviarPalavras');
+    }
 
-btnVerTodasPalavras.addEventListener('click', () => {
-    socket.emit('obterTodasPalavras');
-});
+    mostrarPalavraHandler() {
+        console.log('Solicitando palavra aleatória...');
+        this.socket.emit('mostrarPalavra');
+    }
 
-socket.on('todasPalavras', (palavras) => {
-    alert('Palavras adicionadas: ' + palavras.join(', '));
-});
+    voltarHandler() {
+        console.log('Voltando para tela de preparação...');
+        this.telaJogo.classList.add('hidden');
+        this.telaPreparacao.classList.remove('hidden');
+        this.listaPalavras.innerHTML = '';
+        console.log('Estado atual das telas após voltar:', {
+            telaJogo: this.telaJogo.className,
+            telaPreparacao: this.telaPreparacao.className
+        });
+    }
 
-socket.on('atualizarPalavras', (palavras) => {
-    listaPalavras.innerHTML = '';
-    palavras.forEach((p, index) => {
+    // Socket Event Handlers
+    atualizarPalavrasHandler(palavras) {
+        this.listaPalavras.innerHTML = '';
+        palavras.forEach((palavra, index) => this.criarItemLista(palavra, index));
+    }
+
+    mudarParaTelaJogo() {
+        console.log('Mudando para tela de jogo...');
+        console.log('Estado atual telaPreparacao:', this.telaPreparacao.className);
+        console.log('Estado atual telaJogo:', this.telaJogo.className);
+        
+        this.telaPreparacao.classList.add('hidden');
+        this.telaJogo.classList.remove('hidden');
+        
+        console.log('Novo estado telaPreparacao:', this.telaPreparacao.className);
+        console.log('Novo estado telaJogo:', this.telaJogo.className);
+    }
+
+    exibirPalavraModal(palavra) {
+        this.tituloModal.textContent = 'Palavra Atual';
+        this.palavraExibida.textContent = palavra;
+        this.modal.classList.add('visible');
+        this.modal.setAttribute('aria-hidden', 'false');
+    }
+
+    // Helpers
+    criarItemLista(palavra, index) {
         const li = document.createElement('li');
-        li.textContent = p;
+        li.textContent = palavra;
 
         const btnRemover = document.createElement('button');
-        btnRemover.textContent = 'X';
-        btnRemover.style.marginLeft = '10px';
+        btnRemover.innerHTML = '<i class="uil uil-times"></i>';
         btnRemover.addEventListener('click', () => {
-            socket.emit('removerPalavra', index);
+            this.socket.emit('removerPalavra', index);
         });
 
         li.appendChild(btnRemover);
-        listaPalavras.appendChild(li);
-    });
-});
+        this.listaPalavras.appendChild(li);
+    }
+}
 
-// Comentando funcionalidades relacionadas aos jogadores conectados
-// socket.on('atualizarJogadores', (jogadores) => {
-//     listaJogadores.innerHTML = '';
-//     jogadores.forEach(jogador => {
-//         const li = document.createElement('li');
-//         li.textContent = jogador;
-//         listaJogadores.appendChild(li);
-//     });
-// });
-
-socket.on('telaJogo', () => {
-    telaPreparacao.style.display = 'none';
-    telaJogo.style.display = 'block';
-});
-
-socket.on('mostrarPalavra', (palavra) => {
-    palavraExibida.textContent = `A palavra é: ${palavra}`;
-    modal.style.display = 'flex';
+// Inicializar o jogo quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', () => {
+    new GameUI();
 });

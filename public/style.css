@@ -1,176 +1,278 @@
-/* Estilo otimizado para dispositivos móveis */
-body {
-    font-family: 'Arial', sans-serif;
-    text-align: center;
+/* Variáveis CSS */
+:root {
+    --font-primary: 'Aptos', sans-serif;
+    --color-text: #333;
+    --color-text-light: #ebebeb;
+    --color-primary: rgba(0, 123, 255, 0.8);
+    --color-primary-dark: rgba(0, 92, 191, 0.9);
+    --color-background: rgba(255, 255, 255, 0.7);
+    --shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --radius-small: 5px;
+    --radius-medium: 10px;
+    --spacing-small: 10px;
+    --spacing-medium: 20px;
+    --max-width-container: 800px;
+}
+
+/* Fontes */
+@font-face {
+    font-family: 'Aptos';
+    src: url('./media/fonts/Aptos.ttf') format('truetype');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Aptos';
+    src: url('./media/fonts/Aptos-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+}
+
+@font-face {
+    font-family: 'Aptos';
+    src: url('./media/fonts/Aptos-Bold.ttf') format('truetype');
+    font-weight: 700;
+}
+
+/* Reset e Estilos Base */
+*, *::before, *::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background: #f5f5f5;
-    color: #333;
+}
+
+/* Utilitários */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Layout Base */
+body {
+    font-family: var(--font-primary);
+    text-align: center;
+    background: url('/media/images/background_blue.png') no-repeat center center fixed;
+    background-size: cover;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    box-sizing: border-box;
+    text-transform: uppercase;
+    padding: var(--spacing-medium);
 }
 
+header {
+    margin-bottom: var(--spacing-medium);
+}
+
+main {
+    width: 100%;
+    max-width: var(--max-width-container);
+}
+
+/* Tipografia */
 h1 {
-    font-size: 2em;
-    margin-bottom: 20px;
-    color: #444;
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--color-text-light);
+    font-weight: 800;
 }
 
-/* Ajuste para esconder o container branco ao redor das palavras adicionadas */
-#palavras-container {
-    background: none; /* Remove o fundo branco */
-    border: none; /* Remove a borda */
-    box-shadow: none; /* Remove a sombra */
-    margin: 20px auto; /* Espaçamento adicional para evitar encostar nas bordas */
-    width: 90%;
-    max-width: 500px;
-    padding: 20px;
-    border-radius: 8px;
+/* Componentes */
+.input-container {
+    display: flex;
+    gap: var(--spacing-small);
+    margin: var(--spacing-medium) 0;
+    height: 50px;
 }
 
 #nova-palavra {
-    margin: 10px auto; /* Espaçamento adicional para centralizar e evitar encostar nas bordas */
-    width: calc(100% - 40px); /* Reduz a largura para incluir o espaçamento */
-    max-width: 500px;
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    border-radius: var(--radius-medium);
+    padding: 0 var(--spacing-medium);
+    text-transform: uppercase;
+    font-size: 1rem;
 }
 
-ul {
-    list-style-type: none;
+#adicionar-palavra {
+    width: 50px;
+    border-radius: var(--radius-medium);
+    position: relative;
+    flex-shrink: 0;
     padding: 0;
-    margin: 0;
 }
 
-li {
-    background-color: #e0e0e0;
-    color: #333;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 1em;
+#adicionar-palavra i {
+    font-size: 1.5rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Botões */
+.btn-primary,
+.btn-secondary {
+    font-family: var(--font-primary);
+    text-transform: uppercase;
+    padding: var(--spacing-small) var(--spacing-medium);
+    cursor: pointer;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    border: none;
+    border-radius: var(--radius-medium);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 500px;
+    margin: var(--spacing-small) auto;
+    box-shadow: var(--shadow-default);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+    background-color: var(--color-primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+    background-color: var(--color-primary-dark);
+    transform: translateY(0);
+}
+
+/* Lista de Palavras */
+.palavras-container {
+    margin: var(--spacing-medium) 0;
+}
+
+#palavras-lista {
+    list-style: none;
+}
+
+#palavras-lista li {
+    background-color: var(--color-background);
+    margin: var(--spacing-small) 0;
+    padding: var(--spacing-small);
+    border-radius: var(--radius-medium);
     text-align: left;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#palavras-lista button {
+    background-color: transparent;
+    border: none;
+    padding: var(--spacing-small);
+    cursor: pointer;
+    color: var(--color-text);
+    transition: color 0.3s ease;
+}
+
+#palavras-lista button:hover {
+    color: #d32f2f;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-medium);
+    display: none;
+}
+
+.modal.visible {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--color-background);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-medium);
+    padding: var(--spacing-medium);
+    width: 100%;
+    max-width: 400px;
     position: relative;
 }
 
-/* Ajuste para centralizar verticalmente o botão de excluir e encostá-lo na borda direita */
-li button {
-    background-color: transparent;
-    border: none;
-    position: absolute;
-    right: 0; /* Encosta na borda direita */
-    top: 50%; /* Centraliza verticalmente */
-    transform: translateY(-50%); /* Ajusta para o centro */
-    cursor: pointer;
-    color: #888;
-    font-size: 1em;
-    padding: 0 10px; /* Adiciona espaçamento horizontal */
-}
-
-li button:hover {
-    color: #d32f2f;
-}
-
-input {
-    margin: 10px 0;
-    padding: 10px;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box;
-}
-
-button {
-    padding: 10px 20px;
-    cursor: pointer;
-    background-color: #0078d7;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 1em;
-    transition: background 0.3s ease;
-    width: 100%;
-    max-width: 300px;
-    margin: 10px auto;
-}
-
-button:hover {
-    background-color: #005bb5;
-}
-
-button:active {
-    background-color: #003f8a;
-}
-
-/* Estilo para o modal */
-.modal {
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-/* Ajuste para adicionar efeito fosco ao modal */
-.modal-content {
-    background: rgba(255, 255, 255, 0.8); /* Transparência mantida */
-    backdrop-filter: blur(10px); /* Efeito fosco */
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    color: #333;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 400px;
-    margin: 20px; /* Adicionado espaçamento para evitar encostar nas bordas */
-}
-
-.close {
-    color: #000000;
-    font-size: 30px; /* Aumentado levemente */
-    font-weight: bold;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: #d32f2f;
+#titulo-modal {
+    margin-bottom: var(--spacing-medium);
 }
 
 #palavra-exibida {
-    font-size: 1.5em;
-    margin: 20px 0;
+    font-size: 1.5rem;
     font-weight: bold;
+    margin: var(--spacing-medium) 0;
 }
 
-/* Responsividade */
-@media (max-width: 600px) {
-    h1 {
-        font-size: 1.8em;
+.close {
+    position: absolute;
+    top: var(--spacing-small);
+    right: var(--spacing-small);
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: var(--spacing-small);
+    color: var(--color-text);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    :root {
+        --spacing-medium: 15px;
+        --spacing-small: 8px;
     }
 
-    li {
-        font-size: 0.9em;
-        padding: 8px;
+    .input-container {
+        height: 40px;
     }
 
-    button {
-        font-size: 0.9em;
+    #nova-palavra {
+        font-size: 0.9rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        font-size: 0.9rem;
         padding: 8px 15px;
     }
+}
 
-    input {
-        font-size: 0.9em;
-        padding: 8px;
+@media (max-width: 480px) {
+    body {
+        padding: var(--spacing-small);
+    }
+
+    .modal-content {
+        margin: var(--spacing-small);
+    }
+
+    #palavra-exibida {
+        font-size: 1.2rem;
+    }
+}
+
+@media (hover: none) {
+    .btn-primary:hover,
+    .btn-secondary:hover {
+        transform: none;
     }
 }
