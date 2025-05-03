@@ -103,6 +103,8 @@ h1 {
     padding: 0 var(--spacing-medium);
     text-transform: uppercase;
     font-size: 1rem;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #adicionar-palavra {
