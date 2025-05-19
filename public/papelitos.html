@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Papelitos - Jogo de palavras">
+    <title>Papelitos</title>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Papelitos</h1>
+    </header>
+
+    <main>
+        <section id="tela-preparacao" aria-labelledby="preparacao-title">
+            <h2 id="preparacao-title" class="sr-only">Preparação do Jogo</h2>
+            
+            <div class="palavras-container">
+                <ul id="palavras-lista" aria-label="Lista de palavras adicionadas"></ul>
+            </div>
+            
+            <div class="input-container">
+                <label for="nova-palavra" class="sr-only">Adicionar nova palavra</label>
+                <input type="text" 
+                       id="nova-palavra" 
+                       placeholder="Adicionar nova palavra"
+                       aria-label="Digite uma nova palavra">
+                <button id="adicionar-palavra" 
+                        aria-label="Adicionar palavra">
+                    <i class="uil uil-arrow-up" aria-hidden="true"></i>
+                </button>
+            </div>
+            
+            <button id="enviar-palavras" class="btn-primary">Iniciar Jogo</button>
+        </section>
+
+        <section id="tela-jogo" class="hidden" aria-labelledby="jogo-title">
+            <h2 id="jogo-title" class="sr-only">Jogo em Andamento</h2>
+            <button id="mostrar-palavra" class="btn-primary">Mostrar Palavra</button>
+            <button id="reiniciar-jogo" class="btn-secondary">
+                Reiniciar Palavras
+            </button>
+            <button id="limpar-jogo" class="btn-secondary">
+                Limpar Todas as Palavras
+            </button>
+            <button id="voltar-adicionar-palavras" class="btn-secondary">
+                Voltar para Adicionar Palavras
+            </button>
+        </section>
+    </main>
+
+    <div id="modal-palavra" class="modal" role="dialog" aria-labelledby="titulo-modal" aria-hidden="true">
+        <div class="modal-content">
+            <h3 id="titulo-modal"></h3>
+            <button id="fechar-modal" class="close" aria-label="Fechar">
+                <i class="uil uil-times" aria-hidden="true"></i>
+            </button>
+            <p id="palavra-exibida"></p>
+        </div>
+    </div>
+
+    <div id="modal-login" class="modal visible" role="dialog" aria-labelledby="titulo-login" aria-hidden="true">
+        <div class="modal-content">
+            <h3 id="titulo-login">Bem-vindo ao Papelitos!</h3>
+            <div class="input-container">
+                <label for="nome-jogador">Seu nome:</label>
+                <input type="text" 
+                       id="nome-jogador" 
+                       placeholder="Digite seu nome"
+                       aria-label="Digite seu nome">
+                <button id="salvar-nome" class="btn-primary">
+                    Entrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

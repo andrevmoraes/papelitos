@@ -1,9 +1,11 @@
 class GameUI {
     constructor() {
         this.socket = io();
+        this.playerName = localStorage.getItem('playerName');
         this.initializeElements();
         this.setupEventListeners();
         this.setupSocketListeners();
+        this.checkPlayerName();
     }
 
     initializeElements() {
@@ -18,12 +20,24 @@ class GameUI {
         this.btnEnviar = document.getElementById('enviar-palavras');
         this.btnMostrar = document.getElementById('mostrar-palavra');
         this.botaoVoltar = document.getElementById('voltar-adicionar-palavras');
+        this.btnReiniciar = document.getElementById('reiniciar-jogo');
+        this.btnLimpar = document.getElementById('limpar-jogo');
 
         // Elementos do modal
         this.modal = document.getElementById('modal-palavra');
         this.palavraExibida = document.getElementById('palavra-exibida');
         this.fecharModal = document.getElementById('fechar-modal');
         this.tituloModal = document.getElementById('titulo-modal');
+
+        // Elementos do login
+        this.modalLogin = document.getElementById('modal-login');
+        this.inputNome = document.getElementById('nome-jogador');
+        this.btnSalvarNome = document.getElementById('salvar-nome');
+
+        // Criar elemento para mostrar o nome do jogador
+        this.playerNameDisplay = document.createElement('p');
+        this.playerNameDisplay.className = 'player-name';
+        document.querySelector('header').appendChild(this.playerNameDisplay);
     }
 
     setupEventListeners() {
@@ -37,12 +51,45 @@ class GameUI {
         this.btnEnviar.addEventListener('click', () => this.enviarPalavrasHandler());
         this.btnMostrar.addEventListener('click', () => this.mostrarPalavraHandler());
         this.botaoVoltar.addEventListener('click', () => this.voltarHandler());
+        this.btnReiniciar.addEventListener('click', () => this.reiniciarJogoHandler());
+        this.btnLimpar.addEventListener('click', () => this.limparJogoHandler());
+
+        // Login
+        this.btnSalvarNome.addEventListener('click', () => this.salvarNomeHandler());
+        this.inputNome.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.salvarNomeHandler();
+        });
     }
 
     setupSocketListeners() {
         this.socket.on('atualizarPalavras', (palavras) => this.atualizarPalavrasHandler(palavras));
         this.socket.on('telaJogo', () => this.mudarParaTelaJogo());
         this.socket.on('mostrarPalavra', (palavra) => this.exibirPalavraModal(palavra));
+        this.socket.on('jogoReiniciado', () => this.jogoReiniciadoHandler());
+        this.socket.on('jogoLimpo', () => this.jogoLimpoHandler());
+    }
+
+    checkPlayerName() {
+        if (this.playerName) {
+            this.modalLogin.classList.remove('visible');
+            this.atualizarNomeJogador();
+        } else {
+            this.modalLogin.classList.add('visible');
+        }
+    }
+
+    salvarNomeHandler() {
+        const nome = this.inputNome.value.trim();
+        if (nome) {
+            this.playerName = nome;
+            localStorage.setItem('playerName', nome);
+            this.modalLogin.classList.remove('visible');
+            this.atualizarNomeJogador();
+        }
+    }
+
+    atualizarNomeJogador() {
+        this.playerNameDisplay.textContent = `Jogador: ${this.playerName}`;
     }
 
     // Event Handlers
@@ -90,6 +137,24 @@ class GameUI {
             telaJogo: this.telaJogo.className,
             telaPreparacao: this.telaPreparacao.className
         });
+    }
+
+    reiniciarJogoHandler() {
+        this.socket.emit('reiniciarJogo');
+    }
+
+    limparJogoHandler() {
+        if (confirm('Tem certeza que deseja limpar todas as palavras? Esta ação não pode ser desfeita.')) {
+            this.socket.emit('limparJogo');
+        }
+    }
+
+    jogoReiniciadoHandler() {
+        alert('Jogo reiniciado! Todas as palavras estão disponíveis novamente.');
+    }
+
+    jogoLimpoHandler() {
+        this.voltarHandler();
     }
 
     // Socket Event Handlers

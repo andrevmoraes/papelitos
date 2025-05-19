@@ -2,60 +2,50 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Papelitos - Jogo de palavras">
-    <title>Papelitos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Menu de Jogos">
+    <title>Jogos</title>
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="menu.css">
 </head>
 <body>
-    <header>
-        <h1>Papelitos</h1>
+    <header class="top-bar">
+        <h1>Jogos</h1>
+        <button class="settings-btn" aria-label="Configurações">
+            <i class="uil uil-setting"></i>
+        </button>
     </header>
 
     <main>
-        <section id="tela-preparacao" aria-labelledby="preparacao-title">
-            <h2 id="preparacao-title" class="sr-only">Preparação do Jogo</h2>
-            
-            <div class="palavras-container">
-                <ul id="palavras-lista" aria-label="Lista de palavras adicionadas"></ul>
-            </div>
-            
-            <div class="input-container">
-                <label for="nova-palavra" class="sr-only">Adicionar nova palavra</label>
-                <input type="text" 
-                       id="nova-palavra" 
-                       placeholder="Adicionar nova palavra"
-                       aria-label="Digite uma nova palavra">
-                <button id="adicionar-palavra" 
-                        aria-label="Adicionar palavra">
-                    <i class="uil uil-arrow-up" aria-hidden="true"></i>
-                </button>
-            </div>
-            
-            <button id="enviar-palavras" class="btn-primary">Iniciar Jogo</button>
-        </section>
-
-        <section id="tela-jogo" class="hidden" aria-labelledby="jogo-title">
-            <h2 id="jogo-title" class="sr-only">Jogo em Andamento</h2>
-            <button id="mostrar-palavra" class="btn-primary">Mostrar Palavra</button>
-            <button id="voltar-adicionar-palavras" class="btn-secondary">
-                Voltar para Adicionar Palavras
+        <div class="carousel">
+            <button class="carousel-btn prev" aria-label="Jogo anterior">
+                <i class="uil uil-angle-left-b"></i>
             </button>
-        </section>
+            
+            <div class="carousel-container">
+                <a href="/papelitos" class="game-card active">
+                    <div class="game-content">
+                        <img src="media/images/clipboard.png" alt="Ícone Papelitos" class="game-icon">
+                        <h2>Papelitos</h2>
+                        <p>Jogue Agora</p>
+                    </div>
+                </a>
+                <!-- Futuros jogos serão adicionados aqui -->
+                <div class="game-card coming-soon">
+                    <div class="game-content">
+                        <i class="uil uil-plus-circle"></i>
+                        <h2>Em Breve</h2>
+                        <p>Novo Jogo</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="carousel-btn next" aria-label="Próximo jogo">
+                <i class="uil uil-angle-right-b"></i>
+            </button>
+        </div>
     </main>
 
-    <div id="modal-palavra" class="modal" role="dialog" aria-labelledby="titulo-modal" aria-hidden="true">
-        <div class="modal-content">
-            <h3 id="titulo-modal"></h3>
-            <button id="fechar-modal" class="close" aria-label="Fechar">
-                <i class="uil uil-times" aria-hidden="true"></i>
-            </button>
-            <p id="palavra-exibida"></p>
-        </div>
-    </div>
-
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="script.js"></script>
+    <script src="menu.js"></script>
 </body>
 </html>

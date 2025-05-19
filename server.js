@@ -7,6 +7,7 @@ class GameState {
     constructor() {
         this.palavrasPorJogador = new Map();
         this.todasPalavras = [];
+        this.backupPalavras = []; // Backup para reiniciar o jogo
     }
 
     inicializarJogador(socketId) {
@@ -29,6 +30,7 @@ class GameState {
         if (!palavras) return false;
 
         this.todasPalavras.push(...palavras);
+        this.backupPalavras = [...this.todasPalavras]; // Faz backup das palavras
         this.palavrasPorJogador.set(socketId, []);
         return true;
     }
@@ -61,6 +63,17 @@ class GameState {
     removerJogador(socketId) {
         this.palavrasPorJogador.delete(socketId);
     }
+
+    reiniciarJogo() {
+        this.todasPalavras = [...this.backupPalavras];
+        return this.todasPalavras.length > 0;
+    }
+
+    limparJogo() {
+        this.todasPalavras = [];
+        this.backupPalavras = [];
+        return true;
+    }
 }
 
 // Configuração do servidor
@@ -74,6 +87,11 @@ const io = socketIo(server, {
 
 // Servindo arquivos estáticos
 app.use(express.static('public'));
+
+// Rota específica para o jogo Papelitos
+app.get('/papelitos', (req, res) => {
+    res.sendFile(__dirname + '/public/papelitos.html');
+});
 
 // Instância do estado do jogo
 const gameState = new GameState();
@@ -120,6 +138,18 @@ io.on('connection', (socket) => {
         const palavras = gameState.removerPalavra(socket.id, index);
         if (palavras) {
             socket.emit('atualizarPalavras', palavras);
+        }
+    });
+
+    socket.on('reiniciarJogo', () => {
+        if (gameState.reiniciarJogo()) {
+            socket.emit('jogoReiniciado');
+        }
+    });
+
+    socket.on('limparJogo', () => {
+        if (gameState.limparJogo()) {
+            socket.emit('jogoLimpo');
         }
     });
 
